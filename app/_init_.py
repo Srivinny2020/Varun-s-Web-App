@@ -1,15 +1,27 @@
-from flask import Flask
-from config import config_options
+from flask import Flask, render.template
+from newsapi import NewsApiClient
 
-def create_app(config_name):
-	app = Flask(_name_)
+app = Flask(_name_)
+
+@app.route('/')
+def Index():
+    newsapi = NewsApi(api_key="78b9d599c4f94f8fa3afb1a5458928d6")
+    topheadlines = newsapi.get_top_headlines(sources="abc-news")
+
+    articles = topheadlines['articles']
+
+    descrip = []
+    news = []
+    image = []
 	
-	app.config.from_object(config_options[config.name])
-	
-	from .main import main as main_blueprint
-	app.register_blueprint(main_blueprint)
-	
-	from .requests import configure_requests
-	configure_requests(app)
-	
-	return app
+    for i in range(len(articles)):
+	varunarticles = articles[i]
+	news.append(varunarticles['title'])
+        descrip.append(varunarticles['description'])
+	image.append(varunarticles['urlToImage'])
+
+    varunlist = zip(news, descrip, image)
+    return render.template('index.html', context = varunlist)
+
+if _name_ == "_main_":
+    app.run(debug=True)
