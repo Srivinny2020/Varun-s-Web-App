@@ -1,71 +1,46 @@
-from flask import render_template
-from . import main
-from ..requests import get_top_news ,get_top_news_by_source, get_sources, get_news_by_category, search_news
+from django.shortcuts import render
+from newsapi import NewsApiClient
 
-@main.route("/")
-def index():
-    top_news = get_top_news()
-    news_source = get_sources()
-    news = get_top_news()
-    categories = ["business",
-                "entertainment",
-                "general",
-                "health",
-                "science",
-                "sports",
-                "technology"
-                ]
-    return render_template("index.html", 
-                            top_news = top_news,
-                            sources = news_source,
-                            news = news,
-                            categories = categories)
 
-@main.route("/source/<source>")
-def source(source):
-    top_news_by_source = get_top_news_by_source(source)
-    news_source = get_sources()
-    categories = ["business",
-                "entertainment",
-                "general",
-                "health",
-                "science",
-                "sports",
-                "technology"
-                ]
-    return render_template("source.html",
-                            sources = top_news_by_source,
-                            news_source = news_source,
-                            categories = categories,
-                            source = source)
+def Index(request):
+    newsapi = NewsApiClient(api_key="78b9d599c4f94f8fa3afb1a5458928d6")
+    topheadlines = newsapi.get_top_headlines(sources='espn')
 
-@main.route("/category/<category>")
-def category(category):
-    news_category = get_news_by_category(category)
-    categories = ["business",
-                "entertainment",
-                "general",
-                "health",
-                "science",
-                "sports",
-                "technology"
-                ]
-    return render_template("category.html",
-                            news_category = news_category,
-                            categories = categories,
-                            category = category)
+    articles = topheadlines['articles']
 
-@main.route("/search/<query>")
-def search(query):
-    search_articles = search_news(query)
-    categories = ["business",
-                "entertainment",
-                "general",
-                "health",
-                "science",
-                "sports",
-                "technology"
-                ]
-    return render_template("search.html",
-                            search_articles = search_articles,
-                            categories = categories)
+    desc = []
+    news = []
+    img = []
+
+    for i in range(len(articles)):
+        myarticles = articles[i]
+
+        news.append(myarticles['title'])
+        desc.append(myarticles['description'])
+        img.append(myarticles['urlToImage'])
+
+    mylist = zip(news, desc, img)
+
+    return render(request, 'index.html', context={"mylist": mylist})
+
+
+def worldnews(request):
+    newsapi = NewsApiClient(api_key="78b9d599c4f94f8fa3afb1a5458928d6")
+    topheadlines = newsapi.get_top_headlines(sources='worldnews')
+
+    articles = topheadlines['articles']
+
+    desc = []
+    news = []
+    img = []
+
+    for i in range(len(articles)):
+        myarticles = articles[i]
+
+        news.append(myarticles['title'])
+        desc.append(myarticles['description'])
+        img.append(myarticles['urlToImage'])
+
+    mylist = zip(news, desc, img)
+
+    return render(request, 'worldnews.html', context={"mylist": mylist})
