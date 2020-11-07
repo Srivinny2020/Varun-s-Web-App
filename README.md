@@ -1,3 +1,4 @@
 # VNEWS
 
-Author: Varun Lagadapati, 11/6/2020
+Author
+Varun Lagadapati, 11/6/2020
